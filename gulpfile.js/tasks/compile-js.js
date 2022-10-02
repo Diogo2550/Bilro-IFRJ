@@ -4,7 +4,7 @@ const webpackStream = require('webpack-stream');
 let root_path = 'dist';
 
 function compileJs() {
-	return src('./app/js/**/*.js')
+	return src('./app/js/*.js')
 		.pipe(
 			webpackStream({
 				mode: 'development'

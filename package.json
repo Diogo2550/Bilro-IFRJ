@@ -19,9 +19,12 @@
   },
   "dependencies": {
     "cytoscape": "^3.23.0",
+    "cytoscape-edgehandles": "^4.0.1",
+    "graphology": "^0.25.0",
+    "graphology-types": "^0.24.4",
     "if-env": "^1.0.4",
     "intersection-observer": "^0.12.2",
-    "js-graph-algorithms": "^1.0.18",
+    "jquery": "^3.6.1",
     "lodash": "^4.17.21",
     "tippy.js": "^6.3.7"
   },

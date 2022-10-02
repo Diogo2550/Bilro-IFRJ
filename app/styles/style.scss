@@ -1,0 +1,29 @@
+@use 'graph.scss';
+@use 'tools.scss';
+@use 'button.scss';
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background-color: rgba(0,0,0,1);
+	font-family: 'Arial';
+}
+
+.screen {
+	width: 100vw;
+	height: 100vh;
+	
+	display: flex;
+}
+
+#graph {
+	flex-basis: 1;
+}
+
+.tools {
+	width: 30%;
+}
