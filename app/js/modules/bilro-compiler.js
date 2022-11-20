@@ -12,7 +12,7 @@ const compile = (input) => {
 
 	const errors = lexErrors+synErrors//+semErrors;
 	const algorithm = [];
-	return [algorithm, errors];
+	return [/*algorithm*/tree, errors];
 }
 
 exports.compile = compile;
