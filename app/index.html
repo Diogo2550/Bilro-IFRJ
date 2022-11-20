@@ -12,21 +12,20 @@
 	<link rel="icon" type="image/x-icon" href="/dist/assets/img/favico.ico">
 </head>
 <body>
-	<div class="screen">
+	<main class="screen">
 		<canvas id="canva-screen">
 			
 		</canvas>
-		
-		<div class="tools">
-			<div class="line-colors">
-				<h4>Linhas</h4>
-				<button type="button" class="btn" data-tool="line-create" data-color="blue">Linha azul</button>
-			</div>
+		<div class="code-area">
+			<button class="compile-button" onclick="executeBilro()">
+			</button>
+			<textarea class="input-area" id="code-input">
+			</textarea>
+			</table>
+			<table class="error-table">
 		</div>
-	</div>
-	
+	</main>
 	<img src="assets/img/alfinete.png" id="alfinete" hidden>
-
 	<script src="js/main.js" defer=""></script>
 </body>
 </html>

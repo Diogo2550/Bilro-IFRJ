@@ -20,6 +20,30 @@ body {
 	display: flex;
 }
 
+.graph-area {
+	width: 60%;
+	background-color: red;
+}
+
+.code-area {
+	width: 40%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.compile-button{
+
+}
+
+.input-area{
+
+}
+
+.error-table{
+
+}
+
 #graph {
 	flex-basis: 1;
 }
