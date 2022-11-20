@@ -1,8 +1,12 @@
+const { executeBilro } = require('./modules/bilro-execute');
+
 require('./types/command');
 const { CommandEnum } = require("./types/command");
 
 const { canvas } = require('./modules/canvas/screen.js');
 const Drawner = require('./modules/drawing/drawer.js');
+
+window.executeBilro = executeBilro;
 
 /** @type {Array<Command>} */
 let commandos = [
@@ -28,4 +32,5 @@ let commandos = [
 
 
 const desenhista = new Drawner(canvas, commandos);
+desenhista.run();
 desenhista.init();
