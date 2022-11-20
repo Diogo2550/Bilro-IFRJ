@@ -18,10 +18,6 @@
     "webpack-stream": "^7.0.0"
   },
   "dependencies": {
-    "cytoscape": "^3.23.0",
-    "cytoscape-edgehandles": "^4.0.1",
-    "graphology": "^0.25.0",
-    "graphology-types": "^0.24.4",
     "if-env": "^1.0.4",
     "intersection-observer": "^0.12.2",
     "jquery": "^3.6.1",
