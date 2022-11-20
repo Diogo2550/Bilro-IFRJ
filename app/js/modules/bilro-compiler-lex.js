@@ -1,7 +1,7 @@
 const { isNumber, isString } = require("lodash");
 
-const keyWords = ['alfinete', 'bilros', 'coloque', 'em', 'e', 'troque'];
-const wordRegex = /^[a-z0-9]+/;
+const keyWords = ['alfinete', 'bilros', 'coloque', 'em', '&', 'troque'];
+const wordRegex = /^[a-zA-Z0-9&]+/;
 const whiteSpace = /^[\n\f\t\s\r\v]+/
 
 /**
@@ -11,39 +11,37 @@ const whiteSpace = /^[\n\f\t\s\r\v]+/
 const lex = (input) => {
 	let tokens = [];
 	let errors = [];
-	while(input){
-		input = input.replace(whiteSpace, "");
+	while(input.length){
+		input = input.replace(whiteSpace, '');
+
 		word = input.match(wordRegex);
 		if (word){
 			word = word[0].toLowerCase();
-			input = input.replace(wordRegex, "");
-			if (keyWords.includes(word)){
+			console.log(word);
+			input = input.replace(wordRegex, '');
+
+			if (keyWords.includes(word))
 				tokens.push({
 					word: word,
-					type: word
-				})
-			}
-			else if (isNumber(word)){
-				tokens.push({
-					word: word,
-					type: "NUMERO"
+					tokenType: word
 				});
-			}
-			else {
+			else if (word.match(/^[0-9]+$/))
 				tokens.push({
 					word: word,
-					type: "LETRA"
+					tokenType: "NUMERO"
 				});
-			}
+			else
+				tokens.push({
+					word: word,
+					tokenType: "LETRA"
+				});
 			continue;
 		}
 		error = input.match(/^./);
-		input = input.replace(/^./, "");
+		input = input.replace(/^./, '');
 		errors.push("Caracter "+error+" não esperado!");
 	}
-	console.log(tokens)
-	console.log(errors);
-	return [tokens, errors];
+	return [tokens.reverse(), errors];
 }
 
 exports.lex = lex;
