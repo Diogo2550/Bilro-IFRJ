@@ -8,6 +8,23 @@ let grid_size = 40;
 let width = canvas.getBoundingClientRect().width;
 let height = canvas.getBoundingClientRect().height;
 
+/** 
+ * @typedef {{
+ * 	context: CanvasRenderingContext2D,
+ * 	grid_size: number,
+ * 	width: number,
+ * 	height: number,
+ * 	cols: number,
+ * 	rows: number,
+ * 	colors: any,
+ * 	grid_scale: number,
+ * 	on: {
+ * 		click: Function
+ * 	}
+ * }} CanvasConfig
+ */
+
+/** @type {CanvasConfig} */
 const config = {
 	context: ctx,
 	grid_size: grid_size,
@@ -59,3 +76,4 @@ canvas.addEventListener('mousedown', function(e) {
 });
 
 exports.canvas = canvas;
+exports.canvas_config = config;

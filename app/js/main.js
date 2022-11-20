@@ -2,22 +2,22 @@ require('./types/command');
 const { CommandEnum } = require("./types/command");
 
 const { canvas } = require('./modules/canvas/screen.js');
-const Drawner = require('./modules/drawer/drawer.js');
+const Drawner = require('./modules/drawing/drawer.js');
 
 /** @type {Array<Command>} */
 let commandos = [
 	{
 		command: CommandEnum.PIN,
 		point: {
-			x: 10,
-			y: 10
+			x: 2,
+			y: 2
 		}		
 	},
 	{
 		command: CommandEnum.PIN,
 		point: {
-			x: 11,
-			y: 10
+			x: 4,
+			y: 4
 		}
 	},
 	{
@@ -28,4 +28,4 @@ let commandos = [
 
 
 const desenhista = new Drawner(canvas, commandos);
-desenhista.run();
+desenhista.init();
