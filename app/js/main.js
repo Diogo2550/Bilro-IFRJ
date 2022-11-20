@@ -1,3 +1,5 @@
+const { executeBilro } = require('./modules/bilro-execute');
+
 require('./types/command');
 const { CommandEnum } = require("./types/command");
 
@@ -29,5 +31,5 @@ let commandos = [
 
 const desenhista = new Drawner(canvas, commandos);
 desenhista.run();
-const { executeBilro } = require('./modules/bilro-execute.js');
+
 window.executeBilro = executeBilro;

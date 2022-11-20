@@ -3,6 +3,7 @@ const { compile } = require('./bilro-compiler')
 const executeBilro = () => {
 	const input = document.getElementById("code-input");
 	const [algorithm, errors] = compile(input.value);
+	console.log(errors);
 	if (errors){
 		//exibe erros;
 	}
@@ -10,5 +11,5 @@ const executeBilro = () => {
 		//parte grafica
 	}
 }
-executeBilro();
+
 exports.executeBilro = executeBilro;
