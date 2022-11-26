@@ -9,7 +9,9 @@ require('./point');
  * 	parent: Pin,
  * 	position: {
  * 		from: Point,
- * 		to: Point
+ * 		to: Point,
  * 	}
+*	top: Point,
+*	bottom: Point
  * }} LinePath 
  */

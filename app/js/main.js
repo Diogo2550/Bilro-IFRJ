@@ -16,7 +16,7 @@ let commandos = [
 		point: {
 			x: 1,
 			y: 1
-		}		
+		}
 	},
 	{
 		command: CommandEnum.PIN,
@@ -88,6 +88,7 @@ let commandos = [
 ];
 
 
-const desenhista = new Drawner(canvas, commandos);
+const desenhista = new Drawner(canvas);
+window.drawner = desenhista;
 desenhista.drawing_loop();
 desenhista.init();

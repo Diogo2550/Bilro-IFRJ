@@ -1,4 +1,4 @@
-const { pointToCanvas } = require("../canvas/_canvas-functions");
+const { pointToCanvas, canvasToGrid } = require("../canvas/_canvas-functions");
 const { VectorMath } = require("../utils/vector-math");
 
 const config = {
@@ -180,9 +180,28 @@ class Pin {
 			}
 		};
 		
-		this.paths.push(p1);
-		this.paths.push(p2);
-		this.paths.push(p3);
+		this._addPath(p1);
+		this._addPath(p2);
+		this._addPath(p3);
+	}
+	
+	_addPath(path, start = false) {
+		let from = path.position.from;
+		let to = path.position.to;
+		
+		if(from.y > to.y) {
+			path.top = to;
+			path.bottom = from;
+		} else {
+			path.top = from;
+			path.bottom = to;
+		}
+		
+		if(start) {
+			this.paths.unshift(path)
+		} else {
+			this.paths.push(path);			
+		}
 	}
 	
 	hasBilroId(id) {
@@ -208,14 +227,13 @@ class Pin {
 		if(!this.hasBilroId(path_name))
 			return;
 			
-		let left_to_right = VectorMath.sub(p_final, this.position).x > 0;
-
 		let path = this.getBilroById(path_name);
+		let left_to_right = VectorMath.sub(p_final, canvasToGrid(path.top)).x > 0;
 		if(path_name === this.path_left_name) {
 			// em caso de esqueda, pega o início
 			path.position.from = pointToCanvas(p_final);
 			
-			this.paths.unshift({
+			this._addPath({
 				parent: this,
 				type: 'curve',
 				cur_dir: 'left',
@@ -223,11 +241,11 @@ class Pin {
 					from: path.position.from,
 					to: {
 						x: path.position.from.x + (config.line_offset / 2 * (left_to_right ? 1 : -1)),
-						y: path.position.from.y + config.line_offset * 4
+						y: path.position.from.y + config.line_offset
 					}
 				}
-			});
-			this.paths.unshift({
+			}, true);
+			this._addPath({
 				parent: this,
 				type: 'line',
 				position: {
@@ -237,19 +255,19 @@ class Pin {
 					},
 					to: path.parent.paths[0].position.to
 				}
-			});
+			}, true);
 		} else {
 			// em caso de direita, pega o fim
 			path.position.to = pointToCanvas(p_final);
 			
-			this.paths.push({
+			this._addPath({
 				parent: this,
 				type: 'curve',
 				cur_dir: 'left',
 				position: {
 					from: {
 						x: path.position.to.x + config.line_offset * (left_to_right ? 1 : -1),
-						y: path.position.to.y + config.line_offset * 4
+						y: path.position.to.y + config.line_offset
 					},
 					to: {
 						x: path.position.to.x,
@@ -257,7 +275,7 @@ class Pin {
 					}
 				}
 			});
-			this.paths.push({
+			this._addPath({
 				parent: this,
 				type: 'line',
 				position: {

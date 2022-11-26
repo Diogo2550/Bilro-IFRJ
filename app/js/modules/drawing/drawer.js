@@ -1,6 +1,6 @@
 const { CommandEnum } = require("../../types/command");
 const { VectorMath } = require("../utils/vector-math");
-const { pointToCanvas } = require("../canvas/_canvas-functions");
+const { pointToCanvas, canvasToGrid } = require("../canvas/_canvas-functions");
 const { Pin } = require("./pin");
 
 const pins_preset = [
@@ -21,26 +21,20 @@ const pins_preset = [
 
 class Drawner {
 	
-	constructor(canva, commands) {
+	constructor(canva) {
 		/** @type {HTMLCanvasElement} */
 		this.canva = canva;
 		/** @type {CanvasRenderingContext2D} */
 		this.ctx = canva.getContext('2d');
 		/** @type {Array<import("../../types/command").Command>} */
-		this.commands = commands;
+		this.commands = [];
 		/** @type {Array<Pin>} */
 		this.pins = [];
 		
-		this.pin_count = 1;
-		this.bilro_index = 0;
 		this.drawing_loop = this.update.bind(this);
 	}
 	
-	init() {
-		this.commands.forEach(command => {
-			this.executeCommand(command);
-		});
-		
+	init() {		
 		window.requestAnimationFrame(this.drawing_loop);
 	}
 	
@@ -67,17 +61,28 @@ class Drawner {
 		
 		// [2] processamento
 		// ponto de encontro
-		p_final = VectorMath.sub(b2.parent.getGridPosition(), b1.parent.getGridPosition());
+		p_final = VectorMath.sub(canvasToGrid(b2.top), canvasToGrid(b1.top));
 		// é necessário dividir por 2 pois o ponto será no meio de ambos
 		p_final.x = Math.floor(p_final.x / 2);
 		// é necessário somar 1 pois o próximo nível sempre será 1 abaixo
 		p_final.y += 1;
 		
 		// A partir do b1, o ponto de troca será b1 + p_final
-		p_troca = VectorMath.add(b1.parent.position, p_final);
+		p_troca = VectorMath.add(canvasToGrid(b1.top), p_final);
 		
 		b1.parent.incrementBilro(command.bilros[0], p_troca);
 		b2.parent.incrementBilro(command.bilros[1], p_troca);
+	}
+	
+	sendCommands(commands) {
+		this.commands = commands;
+		this.pin_count = 1;
+		this.bilro_index = 0;
+		this.pins = [];
+		
+		this.commands.forEach(command => {
+			this.executeCommand(command);
+		});
 	}
 	
 	createPin(position) {
@@ -112,7 +117,7 @@ class Drawner {
 	}
 	
 	getPinById(id) {
-		return this.pins.find(pin => pin.id === id);
+		return this.pins.find(pin => pin.id == id);
 	}
 	
 	/** @returns {import("../../types/path").LinePath} */

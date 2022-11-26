@@ -11,33 +11,33 @@ const COLOCA = tokens => {
 			const numero = nextToken(tokens);
 			if (numero.tokenType == "NUMERO")
 				return {
-					action: "colocar",
-					elemento: "bilros",
-					alfinete: numero.word
+					command: "coloque",
+					element: "bilro",
+					target: numero.word
 				}
 			else
 				//falta numero
 				return {
-					action: "error",
+					command: "error",
 					message: ""
 				}
 		}
 		else
 			//falta em
 			return {
-				action: "error",
+				command: "error",
 				message: ""
 			}
 	}
 	else if (next.tokenType == "alfinete")
 		return {
-			action: "colocar",
-			elemento: "alfinete"
+			command: "coloque",
+			element: "alfinete"
 		}
 	else
 		//falta oque
 		return {
-			action: "error",
+			command: "error",
 			message: ""
 		};
 }
@@ -46,32 +46,31 @@ const COLOCA = tokens => {
 const TROCA = tokens => {
 	const letra1 = nextToken(tokens);
 	if(letra1.tokenType == 'LETRA'){
-		console.log("first")
 		if(nextToken(tokens).tokenType == '&'){
 			const letra2 = nextToken(tokens);
 			if(letra2.tokenType = 'LETRA')
 				return {
-					acao: 'troca',
+					command: 'troque',
 					bilros: [letra1.word, letra2.word]
 				}
 			else
 				//troca precisa de bilros
 				return {
-					action: "error",
+					command: "error",
 					message: ""
 				}
 		}
 		else
 			//falta e
 			return {
-				action: "error",
+				command: "error",
 				message: ""
 			}
 	}
 	else{
 		//troca precisa de bilros
 		return {
-			action: "error",
+			command: "error",
 			message: ""
 		}
 	}
@@ -88,7 +87,7 @@ const ACAO = tokens => {
 	else 
 		//falta coloque ou troque
 		return {
-			action: "error",
+			command: "error",
 			message: ""
 		}
 }
@@ -100,9 +99,9 @@ const ALGORITMO = tokens => {
 	while(tokens.length)
 		listACAO.push(ACAO(tokens));
 	const errors = listACAO
-		.filter(elem => elem.action == "error")
+		.filter(elem => elem.command == "error")
 	const nodes = listACAO
-		.filter(elem => elem.action != "error")
+		.filter(elem => elem.command != "error")
 	return [nodes, errors];
 }
 

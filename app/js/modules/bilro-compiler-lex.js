@@ -17,7 +17,7 @@ const lex = (input) => {
 		word = input.match(wordRegex);
 		if (word){
 			word = word[0].toLowerCase();
-			console.log(word);
+			
 			input = input.replace(wordRegex, '');
 
 			if (keyWords.includes(word))
