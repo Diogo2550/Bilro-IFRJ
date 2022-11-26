@@ -12,7 +12,6 @@ require("./point");
  * @enum
  */
 export const CommandEnum = {
-	PIN: 'alfinete',
-	SWAP: 'trocar',
-	PUT: 'coloque'
+	PIN: 'coloque',
+	SWAP: 'troque',
 };

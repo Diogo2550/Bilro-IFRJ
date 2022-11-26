@@ -1,4 +1,5 @@
 const { pointToCanvas } = require("../canvas/_canvas-functions");
+const { VectorMath } = require("../utils/vector-math");
 
 const config = {
 	line_offset: 10,
@@ -12,7 +13,7 @@ class Pin {
 	 * @param {Point} position 
 	 * @param {CanvasRenderingContext2D} ctx 
 	 * @param {string} image_url */
-	constructor(id, position, ctx, image_url, path_left, path_right) {
+	constructor(id, position, ctx, image_url) {
 		this.id = id;
 		
 		this.position = position;
@@ -24,8 +25,6 @@ class Pin {
 		
 		this.sprite = new Image();
 		this.sprite.src = 'assets/img/alfinete.png';
-		this.path_left = path_left;
-		this.path_right = path_right;
 		
 		this.bootstrap();
 	}
@@ -37,7 +36,10 @@ class Pin {
 		this.drawPin();
 	}
 	
-	addBilros() {
+	addBilros(path_left_name, path_right_name, bilro_color = '#fff') {
+		this.path_left_name = path_left_name;
+		this.path_right_name = path_right_name;
+		this.bilro_color = bilro_color;
 		this.has_bilros = true;
 	}
 	
@@ -58,6 +60,8 @@ class Pin {
 		// [1] atribuições
 		const ctx = this.ctx;
 		let position = pointToCanvas(this.position);
+		ctx.beginPath();
+		
 		ctx.moveTo(this.paths[0].position.from.x, this.paths[0].position.from.y);
 		ctx.lineTo(this.paths[0].position.to.x, this.paths[0].position.to.y);
 		
@@ -71,38 +75,57 @@ class Pin {
 			} else {
 				ctx.moveTo(path.position.from.x, path.position.from.y);
 				
-				let cPosition = {
-					x: position.x,
+				let curve_position = {
+					x: path.position.from.x + config.line_offset,
 					y: path.position.to.y
 				};
 				switch(path.cur_dir) {
 					case 'top':
-						cPosition.y = cPosition.y - config.line_offset * 1.5;
+						curve_position.y = curve_position.y - config.line_offset * 1.5;
 						break;
 						
 					case 'bottom':
-						cPosition.y = cPosition.y + config.line_offset * 1.5;
+						curve_position.y = curve_position.y + config.line_offset * 1.5;
 						break;
 						
 					case 'left':
-						cPosition.y = cPosition.x - config.line_offset * 1.5;
+						curve_position.x = curve_position.x - config.line_offset * 1.5;
 						break;
 					
 					case 'right':
-						cPosition.y = cPosition.x + config.line_offset * 1.5;
+						curve_position.x = curve_position.x + config.line_offset * 1.5;
 						break;
 				}
 				
 				ctx.quadraticCurveTo(
-					cPosition.x, cPosition.y, 
+					curve_position.x, curve_position.y, 
 					path.position.to.x, path.position.to.y
 				);
 			}
+			
+			if(i == this.paths.length - 1) {
+				ctx.font = '16px arial';
+				ctx.fillStyle = '#CCC';
+				ctx.textAlign = 'center';
+				ctx.fillText(this.path_right_name, path.position.to.x, path.position.to.y + 18);					
+			}
 		}
 		
+		ctx.font = '16px arial';
+		ctx.fillStyle = '#CCC';
+		ctx.textAlign = 'center';	
+		ctx.fillText(this.path_left_name, this.paths[0].position.from.x, this.paths[0].position.from.y + 18);
+		
 		// [3] desenho
-		ctx.strokeStyle = config.line_color;
+		ctx.strokeStyle = this.bilro_color;
 		ctx.stroke();
+		
+		// [4] texto
+		ctx.font = '16px arial';
+		ctx.fillStyle = '#CCC';
+		ctx.textAlign = 'center';
+		ctx.fillText(this.id, position.x, position.y + 18);
+		
 	}
 	
 	bootstrap() {
@@ -111,6 +134,7 @@ class Pin {
 		/** @type {import("../../types/path").LinePath} */
 		let p1 = {
 			type: 'line',
+			parent: this,
 			position: {
 				from: {
 					x: position.x - config.line_offset,
@@ -119,13 +143,14 @@ class Pin {
 				to: {
 					x: position.x - config.line_offset,
 					y: position.y
-				}				
+				}
 			}
 		}
 		
 		/** @type {import("../../types/path").LinePath} */
 		let p2 = {
 			type: 'curve',
+			parent: this,
 			cur_dir: 'top',
 			position: {
 				from: {
@@ -142,6 +167,7 @@ class Pin {
 		/** @type {import("../../types/path").LinePath} */
 		let p3 = {
 			type: 'line',
+			parent: this,
 			position: {
 				from: {
 					x: position.x + config.line_offset,
@@ -159,13 +185,90 @@ class Pin {
 		this.paths.push(p3);
 	}
 	
+	hasBilroId(id) {
+		if(this.path_left_name === id || this.path_right_name === id)
+			return true;
+		return false;
+	}
+	
 	getBilroById(id) {
-		if(this.path_left === id) {
+		if(this.path_left_name === id) {
 			return this.paths[0];
-		} else if(this.path_right === id) {
+		} else if(this.path_right_name === id) {
 			return this.paths[this.paths.length - 1];
 		}
 		return null;
+	}
+	
+	getGridPosition() {
+		return this.position;
+	}
+	
+	incrementBilro(path_name, p_final) {
+		if(!this.hasBilroId(path_name))
+			return;
+			
+		let left_to_right = VectorMath.sub(p_final, this.position).x > 0;
+
+		let path = this.getBilroById(path_name);
+		if(path_name === this.path_left_name) {
+			// em caso de esqueda, pega o início
+			path.position.from = pointToCanvas(p_final);
+			
+			this.paths.unshift({
+				parent: this,
+				type: 'curve',
+				cur_dir: 'left',
+				position: {
+					from: path.position.from,
+					to: {
+						x: path.position.from.x + (config.line_offset / 2 * (left_to_right ? 1 : -1)),
+						y: path.position.from.y + config.line_offset * 4
+					}
+				}
+			});
+			this.paths.unshift({
+				parent: this,
+				type: 'line',
+				position: {
+					from: {
+						x: path.parent.paths[0].position.to.x,
+						y: path.parent.paths[0].position.to.y + config.line_size / 2
+					},
+					to: path.parent.paths[0].position.to
+				}
+			});
+		} else {
+			// em caso de direita, pega o fim
+			path.position.to = pointToCanvas(p_final);
+			
+			this.paths.push({
+				parent: this,
+				type: 'curve',
+				cur_dir: 'left',
+				position: {
+					from: {
+						x: path.position.to.x + config.line_offset * (left_to_right ? 1 : -1),
+						y: path.position.to.y + config.line_offset * 4
+					},
+					to: {
+						x: path.position.to.x,
+						y: path.position.to.y
+					}
+				}
+			});
+			this.paths.push({
+				parent: this,
+				type: 'line',
+				position: {
+					from: path.parent.paths[path.parent.paths.length - 1].position.from,
+					to: {
+						x: path.parent.paths[path.parent.paths.length - 1].position.from.x,
+						y: path.parent.paths[path.parent.paths.length - 1].position.from.y + config.line_size / 2
+					}
+				}
+			});
+		}
 	}
 	
 }
