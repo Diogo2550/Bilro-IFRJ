@@ -12,7 +12,7 @@ class Pin {
 	 * @param {Point} position 
 	 * @param {CanvasRenderingContext2D} ctx 
 	 * @param {string} image_url */
-	constructor(id, position, ctx, image_url) {
+	constructor(id, position, ctx, image_url, path_left, path_right) {
 		this.id = id;
 		
 		this.position = position;
@@ -20,16 +20,25 @@ class Pin {
 		this.sprite = image_url;
 		/** @type {Array<import("../../types/path").LinePath>} */
 		this.paths = [];
+		this.has_bilros = false;
 		
 		this.sprite = new Image();
 		this.sprite.src = 'assets/img/alfinete.png';
+		this.path_left = path_left;
+		this.path_right = path_right;
 		
 		this.bootstrap();
 	}
 	
 	draw() {
-		this.drawBilros();
+		if(this.has_bilros) {
+			this.drawBilros();
+		}
 		this.drawPin();
+	}
+	
+	addBilros() {
+		this.has_bilros = true;
 	}
 	
 	/** @param {HTMLImageElement} img */
@@ -148,6 +157,15 @@ class Pin {
 		this.paths.push(p1);
 		this.paths.push(p2);
 		this.paths.push(p3);
+	}
+	
+	getBilroById(id) {
+		if(this.path_left === id) {
+			return this.paths[0];
+		} else if(this.path_right === id) {
+			return this.paths[this.paths.length - 1];
+		}
+		return null;
 	}
 	
 }

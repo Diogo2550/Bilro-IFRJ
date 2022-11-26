@@ -4,7 +4,7 @@ const { get_cursor_position, draw_point } = require('./_events');
 const canvas = document.getElementById('canva-screen');
 const ctx = canvas.getContext("2d");
 
-let grid_size = 40;
+let grid_size = 80;
 let width = canvas.getBoundingClientRect().width;
 let height = canvas.getBoundingClientRect().height;
 

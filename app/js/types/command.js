@@ -13,5 +13,6 @@ require("./point");
  */
 export const CommandEnum = {
 	PIN: 'alfinete',
-	SWAP: 'trocar'
+	SWAP: 'trocar',
+	PUT: 'coloque'
 };

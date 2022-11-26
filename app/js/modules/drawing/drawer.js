@@ -1,3 +1,4 @@
+const { Exception } = require("sass");
 const { CommandEnum } = require("../../types/command");
 const { Pin } = require("./pin");
 
@@ -38,6 +39,15 @@ class Drawner {
 	}
 	
 	swapBilro(command) {
+		// [1] declaração de variáveis
+		let { bilros } = command;
+		
+		let b1 = this.getBilroById(command.pin[0]);
+		let b2 = this.getBilroById(command.pin[1]);
+		
+		// [2] processamento
+		console.log(b1);
+		console.log(b2);
 		
 	}
 	
@@ -56,10 +66,28 @@ class Drawner {
 				this.swapBilro(command);
 				break;
 				
+			case CommandEnum.PUT:
+				if(command.elemento === 'alfinete') {
+					console.log(this.getPinById(command.pin[0]))
+				} else if(command.elemento === 'bilro') {
+					console.log(this.getBilroById(command.pin[0]))
+				} else {
+					throw new Exception('Elemento inválido');
+				}
+				
 			default:
 				alert('Comando inválido!');
 		}
 	}
+	
+	getPinById(id) {
+		return this.pins.find(pin => pin.id === id);
+	}
+	
+	getBilroById(id) {
+		return this.pins.find(pin => pin.getBilroById(id));
+	}
+	
 }
 
 module.exports = Drawner;
