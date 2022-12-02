@@ -52,8 +52,8 @@ const TROCAR = tokens => {
 				return {
 					command: 'troque',
 					bilros: [
-						toUpperCase(letra1.word),
-						toUpperCase(letra2.word)
+						letra1.word.toUpperCase(),
+						letra2.word.toUpperCase()
 					].sort()
 				}
 			else
