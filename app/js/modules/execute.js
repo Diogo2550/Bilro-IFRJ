@@ -1,4 +1,4 @@
-const { compile } = require('./bilro-compiler')
+const { compile } = require('./compiler')
 
 const pin_positions = [
 	{x: 1, y: 1}, 
@@ -29,11 +29,12 @@ const treeConverter = (tree) => {
 
 const executeBilro = () => {
 	const input = document.getElementById("code-input");
-	const [algorithm, errors] = compile(input.value);
+	const [algorithm, error] = compile(input.value);
 	current_pin = 0;
 	
-	if (errors){
-		//exibe erros;
+	if (error){
+		//exibe erros
+		alert(error)
 	}
 	else{
 		//parte grafica
