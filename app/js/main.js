@@ -1,4 +1,4 @@
-const { executeBilro } = require('./modules/bilro-execute');
+const { executeBilro } = require('./modules/execute');
 
 require('./types/command');
 const { CommandEnum } = require("./types/command");

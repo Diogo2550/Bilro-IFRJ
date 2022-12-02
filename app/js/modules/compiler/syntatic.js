@@ -2,9 +2,9 @@ const { isEmpty } = require("lodash");
 
 const nextToken = tokens => tokens.length ? tokens.pop() : {tokenType: ""};
 
-//COLOCA -> coloque alfinete
-//COLOCA -> coloque bilros em NÚMERO
-const COLOCA = tokens => {
+//COLOCAR -> coloque alfinete
+//COLOCAR -> coloque bilros em NÚMERO
+const COLOCAR = tokens => {
 	const next = nextToken(tokens);
 	if(next.tokenType == "bilros"){
 		if (nextToken(tokens).tokenType == "em"){
@@ -42,8 +42,8 @@ const COLOCA = tokens => {
 		};
 }
 
-//TROCA -> troque LETRA e LETRA
-const TROCA = tokens => {
+//TROCAR -> troque LETRA e LETRA
+const TROCAR = tokens => {
 	const letra1 = nextToken(tokens);
 	if(letra1.tokenType == 'LETRA'){
 		if(nextToken(tokens).tokenType == '&'){
@@ -51,7 +51,10 @@ const TROCA = tokens => {
 			if(letra2.tokenType = 'LETRA')
 				return {
 					command: 'troque',
-					bilros: [letra1.word, letra2.word]
+					bilros: [
+						toUpperCase(letra1.word),
+						toUpperCase(letra2.word)
+					].sort()
 				}
 			else
 				//troca precisa de bilros
@@ -81,9 +84,9 @@ const TROCA = tokens => {
 const ACAO = tokens => {
 	const first = nextToken(tokens);
 	if (first.tokenType == "coloque")
-		return COLOCA(tokens);
+		return COLOCAR(tokens);
 	else if (first.tokenType == "troque")
-		return TROCA(tokens);
+		return TROCAR(tokens);
 	else 
 		//falta coloque ou troque
 		return {
@@ -94,7 +97,7 @@ const ACAO = tokens => {
 
 //ALGORITMO -> AÇÃO
 //ALGORITMO -> AÇÃO ALGORITMO
-const ALGORITMO = tokens => {
+const ALGORITMO = tokens => {//CORRIGIR (Formato e erros)
 	let listACAO = []
 	while(tokens.length)
 		listACAO.push(ACAO(tokens));

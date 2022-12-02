@@ -38,10 +38,9 @@ const lex = (input) => {
 			continue;
 		}
 		error = input.match(/^./);
-		input = input.replace(/^./, '');
-		errors.push("Caracter "+error+" não esperado!");
+		return [undefined, "Caracter "+error+" não esperado!"];
 	}
-	return [tokens.reverse(), errors];
+	return [tokens.reverse(), undefined];
 }
 
 exports.lex = lex;
