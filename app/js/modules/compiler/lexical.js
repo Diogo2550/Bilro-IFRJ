@@ -1,5 +1,3 @@
-const { isNumber, isString } = require("lodash");
-
 const keyWords = ['alfinete', 'bilros', 'coloque', 'em', '&', 'troque'];
 const wordRegex = /^[a-zA-Z0-9&]+/;
 const whiteSpace = /^[\n\f\t\s\r\v]+/
@@ -38,9 +36,9 @@ const lex = (input) => {
 			continue;
 		}
 		error = input.match(/^./);
-		return [undefined, "Caracter "+error+" não esperado!"];
+		throw "Caracter "+error+" não esperado!";
 	}
-	return [tokens.reverse(), undefined];
+	return tokens.reverse();
 }
 
 exports.lex = lex;
