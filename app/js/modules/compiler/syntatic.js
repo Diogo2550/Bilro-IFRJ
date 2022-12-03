@@ -15,31 +15,16 @@ const COLOCAR = tokens => {
 					element: "bilro",
 					target: numero.word
 				}
-			else
-				//falta numero
-				return {
-					command: "error",
-					message: ""
-				}
+			else throw "Falta a identificação do alfinete!\nAdicione o identificador após \"em\".";
 		}
-		else
-			//falta em
-			return {
-				command: "error",
-				message: ""
-			}
+		else throw "Um par de bilros deve ser colocado em um alfinete!\nAdicione \"em\" e o identificador do alfinete após \"bilros\".";
 	}
 	else if (next.tokenType == "alfinete")
 		return {
 			command: "coloque",
 			element: "alfinete"
 		}
-	else
-		//falta oque
-		return {
-			command: "error",
-			message: ""
-		};
+	else throw "Falta o que vai ser colocado!\nAdicione \"alfinete\" ou \"bilros\" após \"coloque\".";
 }
 
 //TROCAR -> troque LETRA e LETRA
@@ -56,27 +41,11 @@ const TROCAR = tokens => {
 						letra2.word.toUpperCase()
 					].sort()
 				}
-			else
-				//troca precisa de bilros
-				return {
-					command: "error",
-					message: ""
-				}
+			else throw "Um bilro não troca sozinho!\nAdicione o identificador de outro bilro após \"&\".";
 		}
-		else
-			//falta e
-			return {
-				command: "error",
-				message: ""
-			}
+		else throw "Um bilro não troca sozinho!\nAdicione \"&\" e o identificador de outro bilro.";
 	}
-	else{
-		//troca precisa de bilros
-		return {
-			command: "error",
-			message: ""
-		}
-	}
+	else throw "Falta os bilros!\nAdicione o identificador de um bilro, \"&\" e o identificador de outro bilros apoś \"troque\".";
 }
 
 //AÇÃO -> COLOCA
@@ -87,25 +56,17 @@ const ACAO = tokens => {
 		return COLOCAR(tokens);
 	else if (first.tokenType == "troque")
 		return TROCAR(tokens);
-	else 
-		//falta coloque ou troque
-		return {
-			command: "error",
-			message: ""
-		}
+	else throw "Os comandos possiveis são \"coloque\" e \"troque\".";
 }
 
 //ALGORITMO -> AÇÃO
 //ALGORITMO -> AÇÃO ALGORITMO
 const ALGORITMO = tokens => {//CORRIGIR (Formato e erros)
-	let listACAO = []
+	let nodes = []
 	while(tokens.length)
-		listACAO.push(ACAO(tokens));
-	const errors = listACAO
-		.filter(elem => elem.command == "error")
-	const nodes = listACAO
-		.filter(elem => elem.command != "error")
-	return [nodes, errors];
+		nodes.push(ACAO(tokens));
+	if (!nodes.length) throw "Digite alguma coisa antes de executar!"
+	return nodes;
 }
 
 /**
