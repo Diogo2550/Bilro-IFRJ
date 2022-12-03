@@ -95,7 +95,7 @@ class Drawner {
 			case CommandEnum.PIN:
 				if(command.element === 'alfinete') {
 					this.createPin(command.point);
-				} else if(command.element === 'bilro') {
+				} else if(command.element === 'bilros') {
 					this.getPinById(command.target).addBilros(
 						pins_preset[this.bilro_index].left, 
 						pins_preset[this.bilro_index].right, 

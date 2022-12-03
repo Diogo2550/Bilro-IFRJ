@@ -7,6 +7,12 @@ const { canvas } = require('./modules/canvas/screen.js');
 const Drawner = require('./modules/drawing/drawer.js');
 
 window.executeBilro = executeBilro;
+const codeInput = document.getElementById("code-input");
+codeInput.addEventListener('keydown', event => {
+	const keyName = event.key;
+	if (keyName === "Enter")
+		executeBilro();
+});
 
 /** @type {Array<Command>} */
 let commandos = [
