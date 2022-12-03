@@ -26,12 +26,12 @@ const lex = (input) => {
 			else if (word.match(/^[0-9]+$/))
 				tokens.push({
 					word: word,
-					tokenType: "NUMERO"
+					tokenType: "ID_ALFINETE"
 				});
 			else
 				tokens.push({
 					word: word,
-					tokenType: "LETRA"
+					tokenType: "ID_BILROS"
 				});
 			continue;
 		}

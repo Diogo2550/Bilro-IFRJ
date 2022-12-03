@@ -8,12 +8,12 @@ const COLOCAR = tokens => {
 	const next = nextToken(tokens);
 	if(next.tokenType == "bilros"){
 		if (nextToken(tokens).tokenType == "em"){
-			const numero = nextToken(tokens);
-			if (numero.tokenType == "NUMERO")
+			const idAlfinete = nextToken(tokens);
+			if (idAlfinete.tokenType == "ID_ALFINETE")
 				return {
 					command: "coloque",
-					element: "bilro",
-					target: numero.word
+					element: "bilros",
+					target: parseInt(idAlfinete.word)
 				}
 			else throw "Falta a identificação do alfinete!\nAdicione o identificador após \"em\".";
 		}
@@ -29,16 +29,16 @@ const COLOCAR = tokens => {
 
 //TROCAR -> troque LETRA e LETRA
 const TROCAR = tokens => {
-	const letra1 = nextToken(tokens);
-	if(letra1.tokenType == 'LETRA'){
+	const idBIlros1 = nextToken(tokens);
+	if(idBIlros1.tokenType == 'ID_BILROS'){
 		if(nextToken(tokens).tokenType == '&'){
-			const letra2 = nextToken(tokens);
-			if(letra2.tokenType = 'LETRA')
+			const idBIlros2 = nextToken(tokens);
+			if(idBIlros2.tokenType = 'ID_BILROS')
 				return {
 					command: 'troque',
 					bilros: [
-						letra1.word.toUpperCase(),
-						letra2.word.toUpperCase()
+						idBIlros1.word.toUpperCase(),
+						idBIlros2.word.toUpperCase()
 					].sort()
 				}
 			else throw "Um bilro não troca sozinho!\nAdicione o identificador de outro bilro após \"&\".";

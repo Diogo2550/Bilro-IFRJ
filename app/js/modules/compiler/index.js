@@ -5,13 +5,12 @@ const { sem } = require('./semantic');
 const compile = (input) => {
 	//Analise lexica
 	const tokens = lex(input);
-	console.log(tokens)
 	//Analise sintatica
 	const tree = syn(tokens);
 	//Analise semantica
-	sem(tree);
+	const algorithm = sem(tree);
 
-	return tree;
+	return algorithm;
 }
 
 exports.compile = compile;
