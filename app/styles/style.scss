@@ -1,34 +1,40 @@
 * {
 	box-sizing: border-box;
+	font-family: 'Arial';
+	font-size: large;
 	padding: 0;
 	margin: 0;
 }
 
 body {
 	background-color: rgba(50,50,50,1);
-	font-family: 'Arial';
+	width: 100%;
 }
 
 main {
 	display: flex;
-	justify-content: flex-end;
 }
 
 canvas {
-	flex-grow: 6;
+	border: 0;
+	border-radius: 1rem 1rem 0 0 ;
+	flex-grow: 1;
+	margin: 1rem 1rem 0 1rem;
 }
 
 .code-area {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
-	flex-grow: 4;
+	width: 30%;
 }
 
 .compile-button{
-	border: 0 solid;
+	border: 0;
 	border-radius: 0.5rem;
-	box-shadow: 0 0 1rem black;
+	box-shadow:
+		0 0 1rem black,
+		inset 0 0 0.2rem 0.1rem gray;
 	margin: 1rem;
 	padding: 0.5rem;
 	width: fit-content;
@@ -41,4 +47,6 @@ canvas {
 
 .input{
 	width: 100%;
+	flex-grow: 1;
+	padding: 0.5rem;
 }
