@@ -29,17 +29,17 @@ const treeConverter = (tree) => {
 
 const executeBilro = () => {
 	const input = document.getElementById("code-input");
-	const [algorithm, error] = compile(input.value);
-	current_pin = 0;
-	
-	if (error){
-		//exibe erros
-		alert(error)
-	}
-	else{
+	try{
+		//compila
+		const algorithm = compile(input.value);
 		//parte grafica
+		current_pin = 0;
 		let tree = treeConverter(algorithm);
 		window.drawner.sendCommands(tree);
+	}
+	catch(error){
+		//exibe erros
+		alert(error)
 	}
 }
 

@@ -4,16 +4,14 @@ const { sem } = require('./semantic');
 
 const compile = (input) => {
 	//Analise lexica
-	const [tokens, lexError] = lex(input);
+	const tokens = lex(input);
 	console.log(tokens)
 	//Analise sintatica
-	const [tree, synError] = syn(tokens);
+	const tree = syn(tokens);
 	//Analise semantica
-	const semError = sem(tree);
+	sem(tree);
 
-	const error = lexError/*||synError*/||semError;
-
-	return [tree, error];
+	return tree;
 }
 
 exports.compile = compile;
