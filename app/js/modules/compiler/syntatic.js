@@ -1,5 +1,3 @@
-const { isEmpty } = require("lodash");
-
 const nextToken = tokens => tokens.length ? tokens.pop() : {tokenType: ""};
 
 //COLOCAR -> coloque alfinete
@@ -33,7 +31,7 @@ const TROCAR = tokens => {
 	if(idBIlros1.tokenType == 'ID_BILROS'){
 		if(nextToken(tokens).tokenType == '&'){
 			const idBIlros2 = nextToken(tokens);
-			if(idBIlros2.tokenType = 'ID_BILROS')
+			if(idBIlros2.tokenType == 'ID_BILROS')
 				return {
 					command: 'troque',
 					bilros: [
