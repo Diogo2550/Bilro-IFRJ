@@ -28,10 +28,15 @@ const lex = (input) => {
 					word: word,
 					tokenType: "ID_ALFINETE"
 				});
-			else
+			else if (word.match(/^[a-z][01]$/))
 				tokens.push({
 					word: word,
 					tokenType: "ID_BILROS"
+				});
+			else 
+				tokens.push({
+					word: word,
+					tokenType: word
 				});
 			continue;
 		}
