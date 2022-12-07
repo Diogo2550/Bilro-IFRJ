@@ -28,17 +28,18 @@ class Pin {
 	}
 	
 	draw() {
-		if(this.bilros.length) {
-			this.drawBilros();
-		}
+		this.bilros.forEach((bilro, index) => {
+			this.drawBilro(bilro, index);
+		});
+		
 		this.drawPin();
 	}
 	
-	addBilros(path_left_name, path_right_name, bilro_color = '#fff') {
+	addBilro(bilro_color = '#fff') {
 		/** @type {import("../../types/path").Bilro} bilro */
 		let bilro = {
-			path_left_name: path_left_name,
-			path_right_name: path_right_name,
+			path_left_name: (this.bilros.length + 1) * 2 - 1,
+			path_right_name: (this.bilros.length + 1) * 2,
 			paths: [],
 			color: bilro_color
 		};
@@ -47,7 +48,7 @@ class Pin {
 	
 		let paths = this.instantiateInitialBilros();
 		paths.forEach(path => {
-			this._addPathWithBoundings(path, path_left_name);
+			this._addPathWithBoundings(path, bilro.path_left_name);
 		});
 	}
 	
@@ -64,77 +65,82 @@ class Pin {
 		this.ctx.drawImage(this.sprite, position.x, position.y);
 	}
 	
-	drawBilros() {
-		this.bilros.forEach(bilro => {
-			// [1] atribuições
-			const ctx = this.ctx;
-			let position = pointToCanvas(this.position);
-			ctx.beginPath();
+	drawBilro(bilro, bilro_index) {
+		// [1] atribuições
+		const ctx = this.ctx;
+		let offset = bilro_index * 15;
+		let position = pointToCanvas(this.position);
+		ctx.beginPath();
+		
+		// [extra] linha inicial
+		ctx.moveTo(bilro.paths[0].position.from.x - offset, bilro.paths[0].position.from.y);
+		ctx.lineTo(bilro.paths[0].position.to.x, bilro.paths[0].position.to.y);
+		
+		ctx.font = '16px arial';
+		ctx.fillStyle = '#CCC';
+		ctx.textAlign = 'center';	
+		ctx.fillText(bilro.path_left_name, bilro.paths[0].position.from.x - offset, bilro.paths[0].position.from.y + 18);
+		
+		// [2] processamento das linhas
+		for (let i = 1; i < bilro.paths.length; i++) {
+			let path = bilro.paths[i];
 			
-			ctx.moveTo(bilro.paths[0].position.from.x, bilro.paths[0].position.from.y);
-			ctx.lineTo(bilro.paths[0].position.to.x, bilro.paths[0].position.to.y);
-			
-			// [2] processamento
-			for (let i = 1; i < bilro.paths.length; i++) {
-				let path = bilro.paths[i];
-				
-				if(path.type === 'line') {
-					ctx.moveTo(path.position.from.x, path.position.from.y);
-					ctx.lineTo(path.position.to.x, path.position.to.y);
-				} else {
-					ctx.moveTo(path.position.from.x, path.position.from.y);
-					
-					let curve_position = {
-						x: path.position.from.x + config.line_offset,
-						y: path.position.to.y
-					};
-					switch(path.cur_dir) {
-						case 'top':
-							curve_position.y = curve_position.y - config.line_offset * 1.5;
-							break;
-							
-						case 'bottom':
-							curve_position.y = curve_position.y + config.line_offset * 1.5;
-							break;
-							
-						case 'left':
-							curve_position.x = curve_position.x - config.line_offset * 1.5;
-							break;
-						
-						case 'right':
-							curve_position.x = curve_position.x + config.line_offset * 1.5;
-							break;
-					}
-					
-					ctx.quadraticCurveTo(
-						curve_position.x, curve_position.y, 
-						path.position.to.x, path.position.to.y
-					);
-				}
+			if(path.type === 'line') {
+				ctx.moveTo(path.position.from.x, path.position.from.y);
 				
 				if(i == bilro.paths.length - 1) {
-					ctx.font = '16px arial';
-					ctx.fillStyle = '#CCC';
-					ctx.textAlign = 'center';
-					ctx.fillText(this.path_right_name, path.position.to.x, path.position.to.y + 18);					
+					ctx.lineTo(path.position.to.x + offset, path.position.to.y);					
+				} else {
+					ctx.lineTo(path.position.to.x, path.position.to.y);
 				}
+			} else {
+				ctx.moveTo(path.position.from.x, path.position.from.y);
+				
+				let curve_position = {
+					x: path.position.from.x + config.line_offset,
+					y: path.position.to.y
+				};
+				switch(path.cur_dir) {
+					case 'top':
+						curve_position.y = curve_position.y - config.line_offset * 1.5;
+						break;
+						
+					case 'bottom':
+						curve_position.y = curve_position.y + config.line_offset * 1.5;
+						break;
+						
+					case 'left':
+						curve_position.x = curve_position.x - config.line_offset * 1.5;
+						break;
+					
+					case 'right':
+						curve_position.x = curve_position.x + config.line_offset * 1.5;
+						break;
+				}
+				
+				ctx.quadraticCurveTo(
+					curve_position.x, curve_position.y, 
+					path.position.to.x, path.position.to.y
+				);
 			}
 			
-			ctx.font = '16px arial';
-			ctx.fillStyle = '#CCC';
-			ctx.textAlign = 'center';	
-			ctx.fillText(this.path_left_name, bilro.paths[0].position.from.x, bilro.paths[0].position.from.y + 18);
-			
-			// [3] desenho
-			ctx.strokeStyle = this.bilro_color;
-			ctx.stroke();
-			
-			// [4] texto
-			ctx.font = '16px arial';
-			ctx.fillStyle = '#CCC';
-			ctx.textAlign = 'center';
-			ctx.fillText(this.id, position.x, position.y + 18);
-		});		
+			if(i == bilro.paths.length - 1) {
+				ctx.font = '16px arial';
+				ctx.fillStyle = '#CCC';
+				ctx.textAlign = 'center';
+				ctx.fillText(bilro.path_right_name, path.position.to.x + offset, path.position.to.y + 18);					
+			}
+		}
+		
+		// [3] desenho
+		ctx.strokeStyle = bilro.color;
+		ctx.stroke();
+		
+		// [4] texto
+		ctx.font = '16px arial';
+		ctx.fillStyle = '#CCC';
+		ctx.textAlign = 'center';
+		ctx.fillText(this.id, position.x, position.y + 18);	
 	}
 	
 	instantiateInitialBilros() {

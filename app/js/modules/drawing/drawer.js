@@ -3,21 +3,19 @@ const { VectorMath } = require("../utils/vector-math");
 const { pointToCanvas, canvasToGrid } = require("../canvas/_canvas-functions");
 const { Pin } = require("./pin");
 
-const pins_preset = [
-	{left: 'A', right: 'B', color: 'white'}, 
-	{left:'C', right: 'D', color: 'green'}, 
-	{left: 'E', right: 'F', color: 'red'}, 
-	{left: 'G', right: 'H', color: 'blue'}, 
-	{left: 'I', right: 'J', color: 'yellow'}, 
-	{left: 'K', right:'L', color: 'orange'},
-	{left: 'M', right: 'N', color: 'purple'},
-	{left: 'O', right: 'P', color: 'cyan'},
-	{left: 'Q', right: 'R', color: ''},
-	{left: 'S', right: 'T', color: ''},
-	{left: 'U', right: 'V', color: ''},
-	{left: 'W', right: 'X', color: ''},
-	{left: 'Y', right: 'Z', color: ''}
+const colors = [
+	'white', 
+	'green', 
+	'red', 
+	'blue', 
+	'yellow', 
+	'orange',
+	'purple',
+	'cyan'
 ];
+
+//const pin_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+const pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
 class Drawner {
 	
@@ -76,7 +74,7 @@ class Drawner {
 	
 	sendCommands(commands) {
 		this.commands = commands;
-		this.pin_count = 1;
+		this.pin_count = 0;
 		this.bilro_index = 0;
 		this.pins = [];
 		
@@ -86,7 +84,7 @@ class Drawner {
 	}
 	
 	createPin(position) {
-		this.pins.push(new Pin(this.pin_count++, position, this.ctx, this.pin_image));
+		this.pins.push(new Pin(pin_ids[this.pin_count++], position, this.ctx, this.pin_image));
 	}
 	
 	/** @param {import("../../../app/js/types/command").Command} command */
@@ -95,13 +93,10 @@ class Drawner {
 			case CommandEnum.PIN:
 				if(command.element === 'alfinete') {
 					this.createPin(command.point);
-				} else if(command.element === 'bilro') {
-					this.getPinById(command.target).addBilros(
-						pins_preset[this.bilro_index].left, 
-						pins_preset[this.bilro_index].right, 
-						pins_preset[this.bilro_index].color
+				} else if(command.element === 'bilros') {
+					this.getPinById(command.target).addBilro( 
+						colors[this.bilro_index++]
 					);
-					this.bilro_index++;
 				} else {
 					console.error('Elemento inválido');
 				}

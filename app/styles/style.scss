@@ -1,53 +1,52 @@
-@use 'graph.scss';
-@use 'tools.scss';
-@use 'button.scss';
-
 * {
 	box-sizing: border-box;
+	font-family: 'Arial';
+	font-size: large;
 	padding: 0;
 	margin: 0;
 }
 
 body {
 	background-color: rgba(50,50,50,1);
-	font-family: 'Arial';
+	width: 100%;
 }
 
-.screen {
-	width: 100vw;
-	height: 100vh;
-	
+main {
 	display: flex;
 }
 
-.graph-area {
-	width: 60%;
-	background-color: red;
+canvas {
+	border: 0.2rem dashed white;
+	border-radius: 1rem 1rem 0 0 ;
+	flex-grow: 1;
+	margin: 1rem 1rem 0 1rem;
 }
 
 .code-area {
-	width: 40%;
+	align-items: center;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
+	width: 30%;
 }
 
 .compile-button{
-
+	border: 0;
+	border-radius: 0.5rem;
+	box-shadow:
+		0 0 1rem black,
+		inset 0 0 0.2rem 0.1rem gray;
+	margin: 1rem;
+	padding: 0.5rem;
+	width: fit-content;
+	
+	&:hover{
+		box-shadow: none;
+		background-color: gray;
+	}
 }
 
-.input-area{
-
-}
-
-.error-table{
-
-}
-
-#graph {
-	flex-basis: 1;
-}
-
-.tools {
-	width: 30%;
+.input{
+	width: 100%;
+	flex-grow: 1;
+	padding: 0.5rem;
 }

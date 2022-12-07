@@ -1,5 +1,3 @@
-const { isNumber, isString } = require("lodash");
-
 const keyWords = ['alfinete', 'bilros', 'coloque', 'em', '&', 'troque'];
 const wordRegex = /^[a-zA-Z0-9&]+/;
 const whiteSpace = /^[\n\f\t\s\r\v]+/
@@ -28,20 +26,24 @@ const lex = (input) => {
 			else if (word.match(/^[0-9]+$/))
 				tokens.push({
 					word: word,
-					tokenType: "NUMERO"
+					tokenType: "ID_ALFINETE"
 				});
-			else
+			else if (word.match(/^[a-z][01]$/))
 				tokens.push({
 					word: word,
-					tokenType: "LETRA"
+					tokenType: "ID_BILROS"
+				});
+			else 
+				tokens.push({
+					word: word,
+					tokenType: word
 				});
 			continue;
 		}
 		error = input.match(/^./);
-		input = input.replace(/^./, '');
-		errors.push("Caracter "+error+" não esperado!");
+		throw "Caracter "+error+" não esperado!";
 	}
-	return [tokens.reverse(), errors];
+	return tokens.reverse();
 }
 
 exports.lex = lex;

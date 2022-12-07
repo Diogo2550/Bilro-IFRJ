@@ -1,4 +1,4 @@
-const { executeBilro } = require('./modules/bilro-execute');
+const { executeBilro } = require('./modules/execute');
 
 require('./types/command');
 const { CommandEnum } = require("./types/command");
@@ -7,6 +7,15 @@ const { canvas } = require('./modules/canvas/screen.js');
 const Drawner = require('./modules/drawing/drawer.js');
 
 window.executeBilro = executeBilro;
+const codeInput = document.getElementById("code-input");
+codeInput.addEventListener('keydown', event => {
+	const keyName = event.key;
+	if (keyName === "Enter") {
+		if(!executeBilro()) {
+			event.preventDefault();
+		}
+	}
+});
 
 /** @type {Array<Command>} */
 let commandos = [
@@ -90,9 +99,8 @@ let commandos = [
 
 const desenhista = new Drawner(canvas);
 window.drawner = desenhista;
-desenhista.drawing_loop();
 desenhista.init();
 
 setTimeout(() => {
-	document.querySelector('button').click();
+	document.querySelector('#code-input').dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}));
 }, 300);
