@@ -56,8 +56,8 @@ class Drawner {
 		/** @type {Point} posição final que a troca será fixada */
 		let p_troca = null;
 		
-		let b1 = this.getBilroById(command.bilros[0]);
-		let b2 = this.getBilroById(command.bilros[1]);
+		let b1 = this.getPathById(command.bilros[0]);
+		let b2 = this.getPathById(command.bilros[1]);
 		
 		// [2] processamento
 		// ponto de encontro
@@ -120,9 +120,9 @@ class Drawner {
 		return this.pins.find(pin => pin.id == id);
 	}
 	
-	/** @returns {import("../../types/path").LinePath} */
-	getBilroById(id) {
-		return this.pins.find(pin => pin.hasBilroId(id))?.getBilroById(id);
+	/** @returns {import("../../types/path").Bilro} */
+	getPathById(id) {
+		return this.pins.find(pin => pin.hasBilroId(id))?.getPathById(id);
 	}
 	
 }

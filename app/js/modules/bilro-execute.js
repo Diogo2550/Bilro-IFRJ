@@ -34,6 +34,7 @@ const executeBilro = () => {
 	
 	if (errors){
 		//exibe erros;
+		console.error(errors);
 	}
 	else{
 		//parte grafica

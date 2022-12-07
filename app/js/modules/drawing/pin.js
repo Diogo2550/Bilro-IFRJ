@@ -19,28 +19,36 @@ class Pin {
 		this.position = position;
 		this.ctx = ctx;
 		this.sprite = image_url;
-		/** @type {Array<import("../../types/path").LinePath>} */
-		this.paths = [];
+		/** @type {Array<import("../../types/path").Bilro>} */
+		this.bilros = [];
 		this.has_bilros = false;
 		
 		this.sprite = new Image();
 		this.sprite.src = 'assets/img/alfinete.png';
-		
-		this.bootstrap();
 	}
 	
 	draw() {
-		if(this.has_bilros) {
+		if(this.bilros.length) {
 			this.drawBilros();
 		}
 		this.drawPin();
 	}
 	
 	addBilros(path_left_name, path_right_name, bilro_color = '#fff') {
-		this.path_left_name = path_left_name;
-		this.path_right_name = path_right_name;
-		this.bilro_color = bilro_color;
-		this.has_bilros = true;
+		/** @type {import("../../types/path").Bilro} bilro */
+		let bilro = {
+			path_left_name: path_left_name,
+			path_right_name: path_right_name,
+			paths: [],
+			color: bilro_color
+		};
+		
+		this.bilros.push(bilro);
+	
+		let paths = this.instantiateInitialBilros();
+		paths.forEach(path => {
+			this._addPathWithBoundings(path, path_left_name);
+		});
 	}
 	
 	/** @param {HTMLImageElement} img */
@@ -57,78 +65,79 @@ class Pin {
 	}
 	
 	drawBilros() {
-		// [1] atribuições
-		const ctx = this.ctx;
-		let position = pointToCanvas(this.position);
-		ctx.beginPath();
-		
-		ctx.moveTo(this.paths[0].position.from.x, this.paths[0].position.from.y);
-		ctx.lineTo(this.paths[0].position.to.x, this.paths[0].position.to.y);
-		
-		// [2] processamento
-		for (let i = 1; i < this.paths.length; i++) {
-			let path = this.paths[i];
+		this.bilros.forEach(bilro => {
+			// [1] atribuições
+			const ctx = this.ctx;
+			let position = pointToCanvas(this.position);
+			ctx.beginPath();
 			
-			if(path.type === 'line') {
-				ctx.moveTo(path.position.from.x, path.position.from.y);
-				ctx.lineTo(path.position.to.x, path.position.to.y);
-			} else {
-				ctx.moveTo(path.position.from.x, path.position.from.y);
+			ctx.moveTo(bilro.paths[0].position.from.x, bilro.paths[0].position.from.y);
+			ctx.lineTo(bilro.paths[0].position.to.x, bilro.paths[0].position.to.y);
+			
+			// [2] processamento
+			for (let i = 1; i < bilro.paths.length; i++) {
+				let path = bilro.paths[i];
 				
-				let curve_position = {
-					x: path.position.from.x + config.line_offset,
-					y: path.position.to.y
-				};
-				switch(path.cur_dir) {
-					case 'top':
-						curve_position.y = curve_position.y - config.line_offset * 1.5;
-						break;
-						
-					case 'bottom':
-						curve_position.y = curve_position.y + config.line_offset * 1.5;
-						break;
-						
-					case 'left':
-						curve_position.x = curve_position.x - config.line_offset * 1.5;
-						break;
+				if(path.type === 'line') {
+					ctx.moveTo(path.position.from.x, path.position.from.y);
+					ctx.lineTo(path.position.to.x, path.position.to.y);
+				} else {
+					ctx.moveTo(path.position.from.x, path.position.from.y);
 					
-					case 'right':
-						curve_position.x = curve_position.x + config.line_offset * 1.5;
-						break;
+					let curve_position = {
+						x: path.position.from.x + config.line_offset,
+						y: path.position.to.y
+					};
+					switch(path.cur_dir) {
+						case 'top':
+							curve_position.y = curve_position.y - config.line_offset * 1.5;
+							break;
+							
+						case 'bottom':
+							curve_position.y = curve_position.y + config.line_offset * 1.5;
+							break;
+							
+						case 'left':
+							curve_position.x = curve_position.x - config.line_offset * 1.5;
+							break;
+						
+						case 'right':
+							curve_position.x = curve_position.x + config.line_offset * 1.5;
+							break;
+					}
+					
+					ctx.quadraticCurveTo(
+						curve_position.x, curve_position.y, 
+						path.position.to.x, path.position.to.y
+					);
 				}
 				
-				ctx.quadraticCurveTo(
-					curve_position.x, curve_position.y, 
-					path.position.to.x, path.position.to.y
-				);
+				if(i == bilro.paths.length - 1) {
+					ctx.font = '16px arial';
+					ctx.fillStyle = '#CCC';
+					ctx.textAlign = 'center';
+					ctx.fillText(this.path_right_name, path.position.to.x, path.position.to.y + 18);					
+				}
 			}
 			
-			if(i == this.paths.length - 1) {
-				ctx.font = '16px arial';
-				ctx.fillStyle = '#CCC';
-				ctx.textAlign = 'center';
-				ctx.fillText(this.path_right_name, path.position.to.x, path.position.to.y + 18);					
-			}
-		}
-		
-		ctx.font = '16px arial';
-		ctx.fillStyle = '#CCC';
-		ctx.textAlign = 'center';	
-		ctx.fillText(this.path_left_name, this.paths[0].position.from.x, this.paths[0].position.from.y + 18);
-		
-		// [3] desenho
-		ctx.strokeStyle = this.bilro_color;
-		ctx.stroke();
-		
-		// [4] texto
-		ctx.font = '16px arial';
-		ctx.fillStyle = '#CCC';
-		ctx.textAlign = 'center';
-		ctx.fillText(this.id, position.x, position.y + 18);
-		
+			ctx.font = '16px arial';
+			ctx.fillStyle = '#CCC';
+			ctx.textAlign = 'center';	
+			ctx.fillText(this.path_left_name, bilro.paths[0].position.from.x, bilro.paths[0].position.from.y + 18);
+			
+			// [3] desenho
+			ctx.strokeStyle = this.bilro_color;
+			ctx.stroke();
+			
+			// [4] texto
+			ctx.font = '16px arial';
+			ctx.fillStyle = '#CCC';
+			ctx.textAlign = 'center';
+			ctx.fillText(this.id, position.x, position.y + 18);
+		});		
 	}
 	
-	bootstrap() {
+	instantiateInitialBilros() {
 		let position = pointToCanvas(this.position);
 		
 		/** @type {import("../../types/path").LinePath} */
@@ -180,14 +189,13 @@ class Pin {
 			}
 		};
 		
-		this._addPath(p1);
-		this._addPath(p2);
-		this._addPath(p3);
+		return [p1, p2, p3];
 	}
 	
-	_addPath(path, start = false) {
+	_addPathWithBoundings(path, bilro_name, start = false) {
 		let from = path.position.from;
 		let to = path.position.to;
+		let bilro = this.getBilroByPathId(bilro_name);
 		
 		if(from.y > to.y) {
 			path.top = to;
@@ -198,23 +206,31 @@ class Pin {
 		}
 		
 		if(start) {
-			this.paths.unshift(path)
+			bilro.paths.unshift(path)
 		} else {
-			this.paths.push(path);			
+			bilro.paths.push(path);			
 		}
 	}
 	
-	hasBilroId(id) {
-		if(this.path_left_name === id || this.path_right_name === id)
-			return true;
-		return false;
+	hasBilroId(id) {		
+		return this.bilros.findIndex(bilro => bilro.path_left_name === id || bilro.path_right_name === id) > -1;
 	}
 	
-	getBilroById(id) {
-		if(this.path_left_name === id) {
-			return this.paths[0];
-		} else if(this.path_right_name === id) {
-			return this.paths[this.paths.length - 1];
+	/** @returns {import("../../types/path").Bilro} */
+	getBilroByPathId(id) {
+		return this.bilros.find(bilro => bilro.path_left_name === id || bilro.path_right_name === id);
+	}
+	
+	/** @returns {import("../../types/path").LinePath} */
+	getPathById(id) {
+		let index = this.bilros.findIndex(bilro => bilro.path_left_name === id || bilro.path_right_name === id );
+		
+		if(index > -1) {
+			if(this.bilros[index].path_left_name === id) {
+				return this.bilros[index].paths[0];
+			} else if(this.bilros[index].path_right_name === id) {
+				return this.bilros[index].paths[this.bilros[index].paths.length - 1];
+			}
 		}
 		return null;
 	}
@@ -227,7 +243,8 @@ class Pin {
 		if(!this.hasBilroId(path_name))
 			return;
 			
-		let path = this.getBilroById(path_name);
+		let path = this.getPathById(path_name);
+		console.log(path);
 		let left_to_right = VectorMath.sub(p_final, canvasToGrid(path.top)).x > 0;
 		if(path_name === this.path_left_name) {
 			// em caso de esqueda, pega o início

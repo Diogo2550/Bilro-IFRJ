@@ -92,3 +92,7 @@ const desenhista = new Drawner(canvas);
 window.drawner = desenhista;
 desenhista.drawing_loop();
 desenhista.init();
+
+setTimeout(() => {
+	document.querySelector('button').click();
+}, 300);

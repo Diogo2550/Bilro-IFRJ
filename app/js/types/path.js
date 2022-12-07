@@ -11,7 +11,17 @@ require('./point');
  * 		from: Point,
  * 		to: Point,
  * 	}
-*	top: Point,
-*	bottom: Point
+ *	top: Point,
+ *	bottom: Point
  * }} LinePath 
+ */
+
+/**
+ * @typedef {{
+ * 	path_left_name: string,
+ * 	path_right_name: string,
+ * 	paths: Array<LinePath>,
+ * 	parent: Pin,
+ * 	color: string
+ * }} Bilro
  */
