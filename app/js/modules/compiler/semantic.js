@@ -1,19 +1,21 @@
+const calculateGroupSize = base => 2*base-1;
+
+const calculateGroupPosition = (pinId, groupSize) => pinId%groupSize;
+
 //calculateLevel = require("../utils/calculate-level");
 //import não funcionou
-const calculateLevel = (qtdBase, id) =>{
-	const grupo = 2*qtdBase-1;
-	console.log(grupo)
-	const level = Math.floor(id/grupo);
-	if (level%grupo >= qtdBase)
-		return level+1
-	return level
+
+const calculateLevel = (base, pinId) =>{
+	const groupSize = calculateGroupSize(base);
+	const pinLevel = Math.floor(pinId/groupSize);
+	return calculateGroupPosition(pinId, groupSize) >= base ? pinLevel+1 : pinLevel;
 }
 
-const sem = (tree) => {
+const sem = tree => {
 	let troqueStarted = false;
 	let algorithm = [];
-	let qtdAlfinetes = 0;
-	let trocas = [];
+	let countPin = 0;
+	let swaps = [];
 	let bilros = [];
 	tree = tree.reverse();
 	while(tree.length){
@@ -23,51 +25,56 @@ const sem = (tree) => {
 			if (next.element == "alfinete"){
 				if (troqueStarted)
 					throw "Após começar a trocar bilros, não é possivel colocar mais alfinetes iniciais!";
-				if(qtdAlfinetes.length == 6)
+				if(countPin.length == 6)
 					throw "No momento o sistema é limitado a 6 alfinetes!";
-				qtdAlfinetes++;
+				countPin++;
 			}
 			if (next.element == "bilros"){
 				if (troqueStarted)
 					throw "Após começar a trocar bilros, não é possivel colocar mais bilros!";
 				if (next.target <= 0)
 					throw "O identificador de um alfinete é um numero natural!";
-				if (next.target > qtdAlfinetes)
+				if (next.target > countPin)
 					throw "O alfinete "+next.target+" não foi colocado!";
 				if (bilros.filter(elem => elem == next.target).length >= 2)
 					throw "Só é possivel colocar 2 pares de bilros em um alfinete";
 				bilros.push(next.target);
-				console.log(bilros)
 			}
 		}
 		if (next.command == "troque"){
 			troqueStarted = true;
 			const [bilroL, bilroR] = next.bilros;
 			/*verificar se bilro existe*/
-			const charBilroL = bilroL.charCodeAt(0)-65
-			const charBilroR = bilroR.charCodeAt(0)-65
+			const leftChar = bilroL.charCodeAt(0)-65
+			const rightChar = bilroR.charCodeAt(0)-65
 			const numberBilroL = bilroL.at(1);
 			const numberBilroR = bilroL.at(1);
-			if (!bilros.at(charBilroL) || numberBilroL > 1)
+			if (!bilros.at(leftChar) || numberBilroL > 1)
 				throw "Bilro "+bilroL+" não existe";
-			if (!bilros.at(charBilroR) || numberBilroR > 1)
+			if (!bilros.at(rightChar) || numberBilroR > 1)
 				throw "Bilro "+bilroR+" não existe";
 			//verificar se é possivel trocar
-			if (charBilroL == charBilroR)
+			if (leftChar == rightChar)
 				throw "Os bilros devem ser de pares diferentes";
 			
-			const alfineteL = bilros.at(charBilroL);
-			const alfineteR = bilros.at(charBilroR);
+			const leftPin = bilros.at(leftChar);
+			const rightPin = bilros.at(rightChar);
 
-			const origemL = calculateLevel(qtdAlfinetes, alfineteL);
-			const origemR = calculateLevel(qtdAlfinetes, alfineteR);
+			const leftOrigin = calculateLevel(countPin, leftPin);
+			const rightOrigin = calculateLevel(countPin, rightPin);
 			
-			if(origemL != origemR){
-				//verificar extremos
+			if(leftOrigin != rightOrigin){
+				const groupSize = calculateGroupSize(countPin);
+				const leftPosition = calculateGroupPosition(leftOrigin, groupSize);
+				const rightPosition = calculateGroupPosition(rightOrigin, groupSize);
+				if ((leftPosition != 1 || rightPosition != countPin+1) && (leftPosition != countPin || rightPosition != 0))
+					throw ""
 			}
+			else if (Math.abs(leftPin-rightPin)!=1)
+				throw "Os alfinetes devem estar um ao lado do outro";
 
-			trocas.push(next.bilros)
-			if (trocas.length == 4){
+			swaps.push(next.bilros)
+			if (swaps.length == 4){
 				//verificar ordem das trocas
 			}
 		}
