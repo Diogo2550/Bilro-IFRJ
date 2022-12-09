@@ -1,4 +1,10 @@
+const { CommandEnum } = require("../../types/command");
+
 const nextToken = tokens => tokens.length ? tokens.pop() : {tokenType: ""};
+
+const pinWords = ["coloque", "disponha", "assente", "bote", "firme", "ponha", "instale", "acomode", "fixe"]
+
+const swapWords = ["troque", "cruze", "alterne", "inverta", "entrecruze", "permute", "mutue", "comute"]
 
 //COLOCAR -> coloque alfinete
 //COLOCAR -> coloque bilros em NÚMERO
@@ -9,7 +15,7 @@ const COLOCAR = tokens => {
 			const idAlfinete = nextToken(tokens);
 			if (idAlfinete.tokenType == "ID_ALFINETE")
 				return {
-					command: "coloque",
+					command: CommandEnum.PIN,
 					element: "bilros",
 					target: parseInt(idAlfinete.word)
 				}
@@ -19,7 +25,7 @@ const COLOCAR = tokens => {
 	}
 	else if (next.tokenType == "alfinete")
 		return {
-			command: "coloque",
+			command: CommandEnum.PIN,
 			element: "alfinete"
 		}
 	else throw "Falta o que vai ser colocado!\nAdicione \"alfinete\" ou \"bilros\" após \"coloque\".";
@@ -33,7 +39,7 @@ const TROCAR = tokens => {
 			const idBIlros2 = nextToken(tokens);
 			if(idBIlros2.tokenType == 'ID_BILROS')
 				return {
-					command: 'troque',
+					command: CommandEnum.SWAP,
 					bilros: [
 						idBIlros1.word.toUpperCase(),
 						idBIlros2.word.toUpperCase()
@@ -50,18 +56,18 @@ const TROCAR = tokens => {
 //AÇÃO -> TROCA
 const ACAO = tokens => {
 	const first = nextToken(tokens);
-	if (first.tokenType == "coloque")
+	if (pinWords.includes(first.tokenType))
 		return COLOCAR(tokens);
-	else if (first.tokenType == "troque")
+	if (swapWords.includes(first.tokenType))
 		return TROCAR(tokens);
-	else throw "Os comandos possiveis são \"coloque\" e \"troque\".";
+	throw "Os comandos possiveis são \"coloque\" e \"troque\".";
 }
 
 //ALGORITMO -> AÇÃO
 //ALGORITMO -> AÇÃO ALGORITMO
 const ALGORITMO = tokens => {//CORRIGIR (Formato e erros)
 	let nodes = []
-	if (!tokens.length) throw "Digite alguma coisa antes de executar!"
+	//if (!tokens.length) throw "Digite alguma coisa antes de executar!"
 	while(tokens.length)
 		nodes.push(ACAO(tokens));
 	return nodes;
