@@ -61,9 +61,9 @@ const ACAO = tokens => {
 //ALGORITMO -> AÇÃO ALGORITMO
 const ALGORITMO = tokens => {//CORRIGIR (Formato e erros)
 	let nodes = []
+	if (!tokens.length) throw "Digite alguma coisa antes de executar!"
 	while(tokens.length)
 		nodes.push(ACAO(tokens));
-	if (!nodes.length) throw "Digite alguma coisa antes de executar!"
 	return nodes;
 }
 
