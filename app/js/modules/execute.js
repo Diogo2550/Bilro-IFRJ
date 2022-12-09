@@ -30,7 +30,7 @@ const treeConverter = (tree) => {
 const executeBilro = () => {
 	const input = document.getElementById("code-input");
 	try{
-		//compila
+		//compilação
 		const algorithm = compile(input.value);
 		//parte grafica
 		current_pin = 0;

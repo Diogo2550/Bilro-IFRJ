@@ -12,7 +12,8 @@ const isSequence = (pinA, pinB) => Math.abs(pinA-pinB)==1;
 const calculateLevel = (base, pinId) =>{
 	const groupSize = calculateGroupSize(base);
 	const pinLevel = Math.floor(pinId/groupSize);
-	return calculateGroupPosition(pinId, groupSize) >= base ? pinLevel+1 : pinLevel;
+	const groupPosition = calculateGroupPosition(pinId, groupSize);
+	return groupPosition > base ? pinLevel+1 : pinLevel;
 }
 
 const sem = tree => {
@@ -69,15 +70,17 @@ const sem = tree => {
 
 			const leftOrigin = calculateLevel(countPin, leftPin);
 			const rightOrigin = calculateLevel(countPin, rightPin);
-			
-			if(hasSameLevel(leftOrigin, rightOrigin) && !isSequence(leftPin,rightPin))
-				throw "Os alfinetes devem estar um ao lado do outro";
+
+			if(leftOrigin == rightOrigin){
+				if (!isSequence(leftPin, rightPin))
+					throw "Os alfinetes devem estar um ao lado do outro";
+			}
 			else{
 				const groupSize = calculateGroupSize(countPin);
 				const leftPosition = calculateGroupPosition(leftOrigin, groupSize);
 				const rightPosition = calculateGroupPosition(rightOrigin, groupSize);
 				if ((leftPosition != 1 || rightPosition != countPin+1) && (leftPosition != countPin || rightPosition != 0))
-					throw ""
+					throw "Isso aqui n tem nem como acontecer para inicio de conversa . . ."
 			}
 
 			swaps.push(next.bilros)

@@ -7,6 +7,7 @@ const { canvas } = require('./modules/canvas/screen.js');
 const Drawner = require('./modules/drawing/drawer.js');
 
 window.executeBilro = executeBilro;
+
 const codeInput = document.getElementById("code-input");
 codeInput.addEventListener('keydown', event => {
 	const keyName = event.key;
@@ -16,8 +17,8 @@ codeInput.addEventListener('keydown', event => {
 		}
 	}
 });
-
-/** @type {Array<Command>} */
+/*
+/** @type {Array<Command>} *
 let commandos = [
 	{
 		command: CommandEnum.PIN,
@@ -90,12 +91,12 @@ let commandos = [
 		command: CommandEnum.SWAP,
 		bilros: ['D', 'E']
 	},
-	/* {
+	{
 		command: CommandEnum.SWAP,
 		bilros: ['A', 'B']
-	} */
+	} 
 ];
-
+*/
 
 const desenhista = new Drawner(canvas);
 window.drawner = desenhista;

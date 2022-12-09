@@ -15,7 +15,7 @@ const colors = [
 ];
 
 //const pin_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-const pin_ids = ['a0', 'a1', 'b0', 'b1', 'c0', 'c1', 'd0', 'd1', 'e0', 'e1', 'f0', 'f1'];
+//const pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']; não precisa guardar os ids
 
 class Drawner {
 	
@@ -84,7 +84,7 @@ class Drawner {
 	}
 	
 	createPin(position) {
-		this.pins.push(new Pin(pin_ids[this.pin_count++], position, this.ctx, this.pin_image));
+		this.pins.push(new Pin(++this.pin_count, position, this.ctx, this.pin_image));
 	}
 	
 	/** @param {import("../../../app/js/types/command").Command} command */
@@ -92,6 +92,7 @@ class Drawner {
 		switch(command.command) {
 			case CommandEnum.PIN:
 				if(command.element === 'alfinete') {
+					console.log(command.point)
 					this.createPin(command.point);
 				} else if(command.element === 'bilros') {
 					this.getPinById(command.target).addBilro( 
@@ -112,6 +113,7 @@ class Drawner {
 	}
 	
 	getPinById(id) {
+		console.log(this.pins)
 		return this.pins.find(pin => pin.id == id);
 	}
 	

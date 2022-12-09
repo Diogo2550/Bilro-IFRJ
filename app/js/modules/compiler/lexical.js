@@ -8,7 +8,6 @@ const whiteSpace = /^[\n\f\t\s\r\v]+/
 */
 const lex = (input) => {
 	let tokens = [];
-	let errors = [];
 	while(input.length){
 		input = input.replace(whiteSpace, '');
 
