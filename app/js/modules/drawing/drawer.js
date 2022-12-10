@@ -2,6 +2,7 @@ const { CommandEnum } = require("../../types/command");
 const { VectorMath } = require("../utils/vector-math");
 const { pointToCanvas, canvasToGrid } = require("../canvas/_canvas-functions");
 const { Pin } = require("./pin");
+const { canvas_config } = require('./../canvas/screen');
 
 const colors = [
 	'white', 
@@ -15,7 +16,7 @@ const colors = [
 ];
 
 //const pin_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-//const pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']; não precisa guardar os ids
+const pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']; // não precisa guardar os ids
 
 class Drawner {
 	
@@ -54,19 +55,29 @@ class Drawner {
 		/** @type {Point} posição final que a troca será fixada */
 		let p_troca = null;
 		
-		let b1 = this.getPathById(command.bilros[0]);
-		let b2 = this.getPathById(command.bilros[1]);
+		let b1 = canvasToGrid(this.getPathById(command.bilros[0]).top);
+		let b2 = canvasToGrid(this.getPathById(command.bilros[1]).top);
 		
 		// [2] processamento
 		// ponto de encontro
-		p_final = VectorMath.sub(canvasToGrid(b2.top), canvasToGrid(b1.top));
+		p_final = VectorMath.sub(b2.top, b1.top);
 		// é necessário dividir por 2 pois o ponto será no meio de ambos
 		p_final.x = Math.floor(p_final.x / 2);
-		// é necessário somar 1 pois o próximo nível sempre será 1 abaixo
-		p_final.y += 1;
+		
+		/** ATENÇÃO
+		 * Gambiarra para resolver o problema das trocas no mesmo ponto que não foi planejado
+		 * inicialmente. Esta lógica NÃO É CONFIÁVEL visto se a escala da grid diminuir não irá funcionar!!!
+		 */
+		if(Math.abs(b1.x - b2) < canvas_config.grid_size / 2) {
+			// Ta no mesmo alfinete
+			p_final.y += .2;
+		} else {
+			// Tá em alfinetes diferentes. É necessário somar 1 pois o próximo nível sempre será 1 abaixo
+			p_final.y += 1;
+		}
 		
 		// A partir do b1, o ponto de troca será b1 + p_final
-		p_troca = VectorMath.add(canvasToGrid(b1.top), p_final);
+		p_troca = VectorMath.add(b1.top, p_final);
 		
 		b1.parent.incrementBilro(command.bilros[0], p_troca);
 		b2.parent.incrementBilro(command.bilros[1], p_troca);
@@ -84,7 +95,7 @@ class Drawner {
 	}
 	
 	createPin(position) {
-		this.pins.push(new Pin(++this.pin_count, position, this.ctx, this.pin_image));
+		this.pins.push(new Pin(pin_ids[this.pin_count++], position, this.ctx, this.pin_image));
 	}
 	
 	/** @param {import("../../../app/js/types/command").Command} command */
@@ -117,7 +128,7 @@ class Drawner {
 		return this.pins.find(pin => pin.id == id);
 	}
 	
-	/** @returns {import("../../types/path").Bilro} */
+	/** @returns {import("../../types/path").LinePath} */
 	getPathById(id) {
 		return this.pins.find(pin => pin.hasBilroId(id))?.getPathById(id);
 	}

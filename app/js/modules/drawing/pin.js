@@ -38,8 +38,8 @@ class Pin {
 	addBilro(bilro_color = '#fff') {
 		/** @type {import("../../types/path").Bilro} bilro */
 		let bilro = {
-			path_left_name: (this.bilros.length + 1) * 2 - 1,
-			path_right_name: (this.bilros.length + 1) * 2,
+			path_left_name: this.id + (this.bilros.length + 1) * 2 - 1,
+			path_right_name: this.id + (this.bilros.length + 1) * 2,
 			paths: [],
 			color: bilro_color
 		};
@@ -56,6 +56,12 @@ class Pin {
 	drawPin() {
 		let position = pointToCanvas(this.position);
 		
+		// label do alfinete
+		this.ctx.font = '16px arial';
+		this.ctx.fillStyle = '#CCC';
+		this.ctx.textAlign = 'center';
+		this.ctx.fillText(this.id, position.x, position.y + 24);	
+		
 		position = {
 			x: position.x - this.sprite.width / 2,
 			y: position.y - this.sprite.height / 2
@@ -69,7 +75,6 @@ class Pin {
 		// [1] atribuições
 		const ctx = this.ctx;
 		let offset = bilro_index * 15;
-		let position = pointToCanvas(this.position);
 		ctx.beginPath();
 		
 		// [extra] linha inicial
@@ -100,6 +105,7 @@ class Pin {
 					x: path.position.from.x + config.line_offset,
 					y: path.position.to.y
 				};
+				// Curvas (não muito funcional)
 				switch(path.cur_dir) {
 					case 'top':
 						curve_position.y = curve_position.y - config.line_offset * 1.5;
@@ -135,12 +141,6 @@ class Pin {
 		// [3] desenho
 		ctx.strokeStyle = bilro.color;
 		ctx.stroke();
-		
-		// [4] texto
-		ctx.font = '16px arial';
-		ctx.fillStyle = '#CCC';
-		ctx.textAlign = 'center';
-		ctx.fillText(this.id, position.x, position.y + 18);	
 	}
 	
 	instantiateInitialBilros() {
