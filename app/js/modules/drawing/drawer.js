@@ -15,8 +15,11 @@ const colors = [
 	'cyan'
 ];
 
-//const pin_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-const pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']; // não precisa guardar os ids
+var bilro_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+var pin_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+// deixa os ids minusculos 
+//bilro_ids.forEach((el, index) => { bilro_ids[index] = el.toLowerCase() });
 
 class Drawner {
 	
@@ -55,29 +58,50 @@ class Drawner {
 		/** @type {Point} posição final que a troca será fixada */
 		let p_troca = null;
 		
-		let b1 = canvasToGrid(this.getPathById(command.bilros[0]).top);
-		let b2 = canvasToGrid(this.getPathById(command.bilros[1]).top);
+		let b1 = this.getPathById(command.bilros[0]);
+		let b2 = this.getPathById(command.bilros[1]);
+		
+		if(b1.top.y < b2.top.y) {
+			let c = b1;
+			b1 = b2;
+			b2 = c;
+			
+			c = command.bilros[0];
+			command.bilros[0] = command.bilros[1];
+			command.bilros[1] = c;
+		}
+		
+		let b1_top = canvasToGrid(b1.top);
+		let b2_top = canvasToGrid(b2.top);
 		
 		// [2] processamento
 		// ponto de encontro
-		p_final = VectorMath.sub(b2.top, b1.top);
+		p_final = VectorMath.sub(b2_top, b1_top);
 		// é necessário dividir por 2 pois o ponto será no meio de ambos
-		p_final.x = Math.floor(p_final.x / 2);
+		if(b1_top.y - b2_top.y == 0) {
+			p_final.x = Math.floor(p_final.x / 2);			
+		}
 		
 		/** ATENÇÃO
 		 * Gambiarra para resolver o problema das trocas no mesmo ponto que não foi planejado
 		 * inicialmente. Esta lógica NÃO É CONFIÁVEL visto se a escala da grid diminuir não irá funcionar!!!
-		 */
-		if(Math.abs(b1.x - b2) < canvas_config.grid_size / 2) {
+		 */		
+		if(Math.abs(b1_top.x - b2_top.x) < .5) {
 			// Ta no mesmo alfinete
 			p_final.y += .2;
+		} else if(Math.abs(b1_top.y - b2_top.y) >= 1) {
+			p_final.y += 2;
 		} else {
 			// Tá em alfinetes diferentes. É necessário somar 1 pois o próximo nível sempre será 1 abaixo
 			p_final.y += 1;
 		}
 		
 		// A partir do b1, o ponto de troca será b1 + p_final
-		p_troca = VectorMath.add(b1.top, p_final);
+		p_troca = VectorMath.add(b1_top, p_final);
+		
+		if(command.bilros[0] === 'A0') {
+			console.log(b1_top, b2_top, p_troca);
+		}
 		
 		b1.parent.incrementBilro(command.bilros[0], p_troca);
 		b2.parent.incrementBilro(command.bilros[1], p_troca);
@@ -103,12 +127,14 @@ class Drawner {
 		switch(command.command) {
 			case CommandEnum.PIN:
 				if(command.element === 'alfinete') {
-					console.log(command.point)
 					this.createPin(command.point);
 				} else if(command.element === 'bilros') {
 					this.getPinById(command.target).addBilro( 
-						colors[this.bilro_index++]
+						bilro_ids[this.bilro_index],
+						colors[this.bilro_index]
 					);
+					
+					this.bilro_index++;
 				} else {
 					console.error('Elemento inválido');
 				}
@@ -124,7 +150,6 @@ class Drawner {
 	}
 	
 	getPinById(id) {
-		console.log(this.pins)
 		return this.pins.find(pin => pin.id == id);
 	}
 	

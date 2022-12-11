@@ -103,5 +103,6 @@ window.drawner = desenhista;
 desenhista.init();
 
 setTimeout(() => {
+	document.querySelector('#code-input').value = document.querySelector('#code-input').value?.trim();
 	document.querySelector('#code-input').dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}));
 }, 300);

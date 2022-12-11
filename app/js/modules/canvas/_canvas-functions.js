@@ -9,7 +9,14 @@ const pointToCanvas = (point) => {
 };
 
 /** @param {Point} point */
-const canvasToGrid = (point) => {
+const canvasToGrid = (point, returnfloat = false) => {
+	if(returnfloat) {
+		return {
+			x: (point.x / canvas_config.grid_size),
+			y: (point.y / canvas_config.grid_size)
+		}	
+	}
+	
 	return {
 		x: Math.round(point.x / canvas_config.grid_size),
 		y: Math.round(point.y / canvas_config.grid_size)

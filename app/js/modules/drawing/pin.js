@@ -35,11 +35,11 @@ class Pin {
 		this.drawPin();
 	}
 	
-	addBilro(bilro_color = '#fff') {
+	addBilro(bilro_id, bilro_color = '#fff') {
 		/** @type {import("../../types/path").Bilro} bilro */
 		let bilro = {
-			path_left_name: this.id + (this.bilros.length + 1) * 2 - 1,
-			path_right_name: this.id + (this.bilros.length + 1) * 2,
+			path_left_name: bilro_id + 0,
+			path_right_name: bilro_id + 1,
 			paths: [],
 			color: bilro_color
 		};
@@ -82,9 +82,9 @@ class Pin {
 		ctx.lineTo(bilro.paths[0].position.to.x, bilro.paths[0].position.to.y);
 		
 		ctx.font = '16px arial';
-		ctx.fillStyle = '#CCC';
+		ctx.fillStyle = bilro.color;
 		ctx.textAlign = 'center';	
-		ctx.fillText(bilro.path_left_name, bilro.paths[0].position.from.x - offset, bilro.paths[0].position.from.y + 18);
+		ctx.fillText(bilro.path_left_name, bilro.paths[0].position.from.x - offset * 1.5, bilro.paths[0].position.from.y + 18);
 		
 		// [2] processamento das linhas
 		for (let i = 1; i < bilro.paths.length; i++) {
@@ -108,19 +108,19 @@ class Pin {
 				// Curvas (não muito funcional)
 				switch(path.cur_dir) {
 					case 'top':
-						curve_position.y = curve_position.y - config.line_offset * 1.5;
+						curve_position.y = curve_position.y - config.line_offset * 1.3;
 						break;
 						
 					case 'bottom':
-						curve_position.y = curve_position.y + config.line_offset * 1.5;
+						curve_position.y = curve_position.y + config.line_offset * 1.3;
 						break;
 						
 					case 'left':
-						curve_position.x = curve_position.x - config.line_offset * 1.5;
+						curve_position.x = curve_position.x - config.line_offset * 1.3;
 						break;
 					
 					case 'right':
-						curve_position.x = curve_position.x + config.line_offset * 1.5;
+						curve_position.x = curve_position.x + config.line_offset * 1.3;
 						break;
 				}
 				
@@ -132,9 +132,9 @@ class Pin {
 			
 			if(i == bilro.paths.length - 1) {
 				ctx.font = '16px arial';
-				ctx.fillStyle = '#CCC';
+				ctx.fillStyle = bilro.color;
 				ctx.textAlign = 'center';
-				ctx.fillText(bilro.path_right_name, path.position.to.x + offset, path.position.to.y + 18);					
+				ctx.fillText(bilro.path_right_name, path.position.to.x + offset * 1.5, path.position.to.y + 18);					
 			}
 		}
 		
@@ -250,40 +250,41 @@ class Pin {
 			return;
 			
 		let path = this.getPathById(path_name);
-		console.log(path);
-		let left_to_right = VectorMath.sub(p_final, canvasToGrid(path.top)).x > 0;
-		if(path_name === this.path_left_name) {
+		let left_to_right = VectorMath.sub(p_final, canvasToGrid(path.top, true)).x > 0;
+		let bilro = this.getBilroByPathId(path_name);
+		
+		if(path_name === bilro.path_left_name) {
 			// em caso de esqueda, pega o início
 			path.position.from = pointToCanvas(p_final);
 			
-			this._addPath({
+			this._addPathWithBoundings({
 				parent: this,
 				type: 'curve',
 				cur_dir: 'left',
 				position: {
-					from: path.position.from,
-					to: {
-						x: path.position.from.x + (config.line_offset / 2 * (left_to_right ? 1 : -1)),
+					from: {
+						x: path.position.from.x + (config.line_offset * (left_to_right ? 1 : -1)),
 						y: path.position.from.y + config.line_offset
-					}
+					},
+					to: path.position.from
 				}
-			}, true);
-			this._addPath({
+			}, path_name, true);
+			this._addPathWithBoundings({
 				parent: this,
 				type: 'line',
 				position: {
 					from: {
-						x: path.parent.paths[0].position.to.x,
-						y: path.parent.paths[0].position.to.y + config.line_size / 2
+						x: bilro.paths[0].position.to.x + config.line_offset * (left_to_right ? 1 : -1),
+						y: bilro.paths[0].position.to.y + config.line_size / 2
 					},
-					to: path.parent.paths[0].position.to
+					to: bilro.paths[0].position.from					
 				}
-			}, true);
+			}, path_name, true);
 		} else {
 			// em caso de direita, pega o fim
 			path.position.to = pointToCanvas(p_final);
 			
-			this._addPath({
+			this._addPathWithBoundings({
 				parent: this,
 				type: 'curve',
 				cur_dir: 'left',
@@ -297,18 +298,18 @@ class Pin {
 						y: path.position.to.y
 					}
 				}
-			});
-			this._addPath({
+			}, path_name);
+			this._addPathWithBoundings({
 				parent: this,
 				type: 'line',
 				position: {
-					from: path.parent.paths[path.parent.paths.length - 1].position.from,
+					from: bilro.paths[bilro.paths.length - 1].position.from,
 					to: {
-						x: path.parent.paths[path.parent.paths.length - 1].position.from.x,
-						y: path.parent.paths[path.parent.paths.length - 1].position.from.y + config.line_size / 2
+						x: bilro.paths[bilro.paths.length - 1].position.from.x,
+						y: bilro.paths[bilro.paths.length - 1].position.from.y + config.line_size / 2
 					}
 				}
-			});
+			}, path_name);
 		}
 	}
 	
