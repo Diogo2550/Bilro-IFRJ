@@ -1,6 +1,7 @@
-const keyWords = ['alfinete', 'bilros', 'coloque', 'em', '&', 'troque'];
 const wordRegex = /^[a-zA-Z0-9&]+/;
-const whiteSpace = /^[\n\f\t\s\r\v]+/
+const whiteSpaceRegex = /^[\n\f\t\s\r\v]+/
+const idPinRegex = /^[0-9]+$/
+const idBilroRegex = /^[a-z][01]$/
 
 /**
 	@description Analise lexica -> Captura todos os tokens validos.
@@ -9,7 +10,11 @@ const whiteSpace = /^[\n\f\t\s\r\v]+/
 const lex = (input) => {
 	let tokens = [];
 	while(input.length){
-		input = input.replace(whiteSpace, '');
+		whiteSpace = input.match(whiteSpaceRegex);
+		if (whiteSpace){
+			input = input.replace(whiteSpaceRegex, '');
+			continue;
+		}
 
 		word = input.match(wordRegex);
 		if (word){
@@ -17,17 +22,12 @@ const lex = (input) => {
 			
 			input = input.replace(wordRegex, '');
 
-			if (keyWords.includes(word))
-				tokens.push({
-					word: word,
-					tokenType: word
-				});
-			else if (word.match(/^[0-9]+$/))
+			if (word.match(idPinRegex))
 				tokens.push({
 					word: word,
 					tokenType: "ID_ALFINETE"
 				});
-			else if (word.match(/^[a-z][01]$/))
+			else if (word.match(idBilroRegex))
 				tokens.push({
 					word: word,
 					tokenType: "ID_BILROS"
@@ -35,7 +35,7 @@ const lex = (input) => {
 			else 
 				tokens.push({
 					word: word,
-					tokenType: word
+					tokenType: "KEYWORD"
 				});
 			continue;
 		}
