@@ -8,6 +8,10 @@ let grid_size = 80;
 let width = canvas.getBoundingClientRect().width;
 let height = canvas.getBoundingClientRect().height;
 
+if(width >= window.innerWidth) {
+	width = window.innerWidth * .6;
+}
+
 /** 
  * @typedef {{
  * 	context: CanvasRenderingContext2D,

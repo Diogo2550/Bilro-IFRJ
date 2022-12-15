@@ -1,25 +1,81 @@
 * {
 	box-sizing: border-box;
-	font-family: 'Arial';
 	font-size: large;
 	padding: 0;
 	margin: 0;
 }
 
+p {
+	margin-bottom: 0;
+}
+
 body {
 	background-color: rgba(50,50,50,1);
+	font-family: 'Raleway';
+	color: white;
 	width: 100%;
 }
 
+h1 {
+	font-weight: 600;
+}
+
 main {
+	padding: 20px;
+}
+
+.flex {
 	display: flex;
 }
 
-canvas {
-	border: 0.2rem dashed white;
-	border-radius: 1rem 1rem 0 0 ;
-	flex-grow: 1;
-	margin: 1rem 1rem 0 1rem;
+.header {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 32px;
+
+ 	&__logo {		
+		img {
+			max-height: 60px;
+			margin-right: 16px;
+		}
+	}
+	
+	&__helper {
+		align-items: center;
+		display: flex;
+		cursor: pointer;
+		
+		i {
+			font-size: 36px;
+		}
+	}
+	
+	small {
+		font-size: .8em;
+	}
+}
+
+.helper__video {
+	max-height: 380px;
+	width: 100%;
+	
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.screen {
+	display: flex;
+	
+	canvas {
+		border: 0.2rem dashed white;
+		border-radius: 1rem;
+		flex-grow: 1;
+		
+		background-image: url('../assets/img/textura-tecido.jpg');
+		margin-right: 16px;
+		
+		min-height: 800px;
+	}
 }
 
 .code-area {
@@ -29,24 +85,32 @@ canvas {
 	width: 30%;
 }
 
-.compile-button{
-	border: 0;
-	border-radius: 0.5rem;
-	box-shadow:
-		0 0 1rem black,
-		inset 0 0 0.2rem 0.1rem gray;
-	margin: 1rem;
-	padding: 0.5rem;
-	width: fit-content;
-	
-	&:hover{
-		box-shadow: none;
-		background-color: gray;
-	}
-}
-
 .input{
 	width: 100%;
 	flex-grow: 1;
 	padding: 0.5rem;
+	border-radius: 1rem;
+	border: none;
+}
+
+.modal {
+	color: #333;
+}
+
+@media (max-width: 768px) {
+	main {
+		padding-top: 160px;
+	}
+	
+	.input {
+		position: fixed;
+		border-radius: 0;
+		left: 0;
+		top: 0;
+		height: 140px;
+	}
+	
+	.code-area {
+		width: 0;
+	}
 }
