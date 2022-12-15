@@ -58,7 +58,7 @@ class Pin {
 		
 		// label do alfinete
 		this.ctx.font = '16px arial';
-		this.ctx.fillStyle = '#CCC';
+		this.ctx.fillStyle = '#333';
 		this.ctx.textAlign = 'center';
 		this.ctx.fillText(this.id, position.x, position.y + 24);	
 		
